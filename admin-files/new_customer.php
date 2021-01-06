@@ -42,8 +42,8 @@ $acc_no=rand(1230001,1239991);
 		$query1="INSERT INTO CUSTOMERS(Acc_no,First_name,Status,DOB,Contact_no,Address,Created_on,Amount,ATM_NO,PIN) VALUES('$acc_no','$first_name','$status','$dob','$contact_no','$address','$created_on','$amount','$atm_no','$pin')";
         
 		if($query1_data = $mysql1->query($query1)){
-			//$query_insert_in_credit = "INSERT INTO credit_cash(saldo, owner) VALUES('0', '$acc_no')";
-			//$mysql1->query($query_insert_in_credit);
+			$query_insert_in_credit = "INSERT INTO credit_cash(saldo, owner) VALUES('0', '$acc_no')";
+			$mysql1->query($query_insert_in_credit);
 			$query3="SELECT * FROM CUSTOMERS WHERE Acc_no='$acc_no'";
 			
 			if($query3_data = $mysql1->query($query3)){
@@ -78,7 +78,7 @@ $acc_no=rand(1230001,1239991);
                                 <label for="Status" class="control-label">Status</label>
                                 <select class="custom-select margin-bottom-15" id="Status" name="Status" required>
 	                                <option>Member</option>
-						            <option>Administrator</option>
+					<option>Administrator</option>
 		                        </select>								
                             </div>
                         </div> 
@@ -86,7 +86,7 @@ $acc_no=rand(1230001,1239991);
 		                <div class="row">
                             <div class="col-md-6 margin-bottom-15">
                                 <label for="contactno" class="control-label">Contact Number</label>
-                                <input type="text" class="form-control" id="contactno" name="Contact_no" placeholder="Contact Number" required>                  
+                                <input type="number" class="form-control" id="contactno" name="Contact_no" placeholder="Contact Number" required>                  
                             </div>
 							
                             <div class="col-md-6 margin-bottom-15">
