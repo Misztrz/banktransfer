@@ -2,8 +2,7 @@
 require 'server_connect.inc.php';
 if(!isset($_SESSION))
 session_start();
-?>
-<?php
+
 if(isset($_POST['ATM_NO']) && !empty($_POST['ATM_NO']) && isset($_POST['PIN']) && !empty($_POST['PIN']) ){
 		
 		$atm_no=$_POST['ATM_NO'];
@@ -59,6 +58,52 @@ if(isset($_POST['Emp_id']) && !empty($_POST['Emp_id']) && isset($_POST['Password
 				    }
 			}
     }		
+	
+	
+	if(isset($_POST['loginReg']) && !empty($_POST['loginReg']) && isset($_POST['nameReg']) && !empty($_POST['nameReg']) && isset($_POST['contactReg']) && !empty($_POST['contactReg']) 
+		&& isset($_POST['addressReg']) && !empty($_POST['addressReg']) && isset($_POST['monthReg']) && !empty($_POST['monthReg']) && isset($_POST['dayReg']) && !empty($_POST['dayReg'])
+	    && isset($_POST['yearReg']) && !empty($_POST['yearReg']) && isset($_POST['pinReg']) && !empty($_POST['pinReg'])) 
+		{
+			
+			$name=$_POST['nameReg'];
+            $login=$_POST['loginReg'];
+            $address=$_POST['addressReg'];
+            $day=$_POST['dayReg'];
+            $month=$_POST['monthReg'];
+            $year=$_POST['yearReg'];
+            $contact_no=$_POST['contactReg'];
+            $time=time();
+            $created_on=date("Y/m/d",$time);
+            $pin=$_POST['pinReg'];
+            $acc_no=rand(1230001,1239991);
+
+/*concatenating stings*/
+	        $dob=$year."/".$month."/".$day;
+
+	        $query2="SELECT Acc_no,ATM_NO FROM CUSTOMERS WHERE Acc_no='$acc_no' OR ATM_NO='$login'";
+	        $query2_data=$mysql1->query($query2);
+
+	        if($row = $query2_data->num_rows == 0){
+		        $query1="INSERT INTO CUSTOMERS(Acc_no,First_name,Status,DOB,Contact_no,Address,Created_on,Amount,ATM_NO,PIN) VALUES('$acc_no','$name','Member','$dob','$contact_no','$address','$created_on','0','$login','$pin')";
+        
+		if($query1_data = $mysql1->query($query1)){
+			$query3="SELECT * FROM CUSTOMERS WHERE Acc_no='$acc_no'";
+			
+			if($query3_data = $mysql1->query($query3)){
+			    $query3_row=$query3_data->fetch_assoc();
+			    $name=$query3_row['First_name'];
+			    $login=$query3_row['ATM_NO'];
+				$pin=$query3_row['PIN'];
+					echo '	<p class="success-msg" style="text-align: center;">Welcome to Moneta Family</h3><br>Name: '.$name.'
+			                <br>Account number: '.$acc_no.'<br>Login: '.$login.'<br>PIN: '.$pin.'</p> ';
+			}
+				
+		}else{  echo '<p class="error-msg">Something wrong</p>';}		
+				
+	}else { echo'<p class="error-msg">Account exists!</p>';}
+	
+	
+		}		
 ?>
 
 <!doctype html>
@@ -93,11 +138,12 @@ if(isset($_POST['Emp_id']) && !empty($_POST['Emp_id']) && isset($_POST['Password
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
 							
-							<div class="modal-body">
+							<form role="form" action="home.php" method="POST">
+							<div class="modal-body">					
 							    <div class="row">
 								     <div class="col-md-6 margin-bottom-15">
 								        <label for="loginReg" class="control-label">Login</label>
-									    <input type="text" class="form-control" id="loginReg" name="loginReg" placeholder="Login" required>
+									    <input type="number" class="form-control" id="loginReg" name="loginReg" placeholder="Login" required>
 									</div>
 								    <div class="col-md-6 margin-bottom-15">
 								        <label for="nameReg" class="control-label">Name</label>
@@ -162,12 +208,14 @@ if(isset($_POST['Emp_id']) && !empty($_POST['Emp_id']) && isset($_POST['Password
 									    <input type="number" class="form-control" id="pinReg" name="pinReg" placeholder="PIN" required>
 								    </div>	         							
 							    </div>
+							
 							</div>
 							
                             <div class="modal-footer">
-                                <a href="home.php" class="btn btn-success">Create</a>
+                                <button type="submit" class="btn btn-success">Create</button>
                                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                             </div>
+							</form>
                         </div>
                     </div>
         </div>
