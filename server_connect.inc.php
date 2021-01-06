@@ -1,19 +1,15 @@
 <?php 
-	$dbname1 = 'bankman';
-    $dbname2 = 'coupons';
-    $dbpass = 'dexde3';
-    $dbuser = 'root';
+    $dbname1 = 'heroku_5bed88585e7b234';
+    $dbpass = '41f08082';
+    $dbuser = 'bd78a604caf3aa';
 
-$mysql1 = new mysqli('localhost', $dbuser, $dbpass, $dbname1);
-$mysql2 = new mysqli('localhost', $dbuser, $dbpass, $dbname2);
+$mysql1 = new mysqli('us-cdbr-east-02.cleardb.com', $dbuser, $dbpass, $dbname1);
 
-if($mysql1->connect_errno && $mysql2->connect_errno)
+if($mysql1->connect_errno)
 {
-	echo "Failed to connect to MYSQL: ".$mysql1->connect_error." ".$mysql2->error;
+	echo "Failed to connect to MYSQL: ".$mysql1->connect_error;
 }
  $mysql1->select_db($dbname1);
- $mysql2->select_db($dbname2);
- 
 
 ?>
 
