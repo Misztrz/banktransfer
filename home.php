@@ -87,7 +87,7 @@ if(isset($_POST['Emp_id']) && !empty($_POST['Emp_id']) && isset($_POST['Password
 		        $query1="INSERT INTO CUSTOMERS(Acc_no,First_name,Status,DOB,Contact_no,Address,Created_on,Amount,ATM_NO,PIN) VALUES('$acc_no','$name','Member','$dob','$contact_no','$address','$created_on','0','$login','$pin')";
         
 		if($query1_data = $mysql1->query($query1)){
-			$query_insert_in_credit = "INSERT INTO credit_cach(saldo, owner) VALUES('0', '$acc_no')";
+			$query_insert_in_credit = "INSERT INTO credit_cash(saldo, owner) VALUES('0', '$acc_no')";
 			$mysql1->query($query_insert_in_credit);
 			$query3="SELECT * FROM CUSTOMERS WHERE Acc_no='$acc_no'";
 			
