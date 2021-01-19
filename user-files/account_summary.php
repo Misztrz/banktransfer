@@ -2,23 +2,23 @@
 if(isset($_GET['subtopic_accsum']))
 {
 
-$query0="SELECT * FROM credit_cash WHERE owner='$acc_no'";
-$query1="SELECT * FROM Transactions WHERE Acc_no1='$acc_no' OR Acc_no2='$acc_no' ORDER BY date DESC";
+$query0="SELECT * FROM credit_cash WHERE owner='".$user->getAccno()."'";
+$query1="SELECT * FROM Transactions WHERE Acc_no1='".$user->getAccno()."' OR Acc_no2='".$user->getAccno()."' ORDER BY date DESC";
 
 $query0_data=$mysql1->query($query0);
 $query1_data=$mysql1->query($query1);
 
 $query0_result = $query0_data->fetch_assoc();
-$credit = $query0_result['saldo'];
+$credit->setCredit($query0_result['saldo']);
 
 	
-    echo '<p class="btn btn-outline-secondary disabled text-font" style="font-size: 25px; border-radius: 10px; border: 6px double;">Account Number: '.number_format($acc_no, 0, ' ', ' ').'</p><br><br>
-	      <p class="btn btn-outline-info disabled text-font" style="font-size: 25px; border-radius: 10px; border: 6px double;">Balance: '.number_format($amount, 0, ' ', ' ').' gp</p><br><br>';
+    echo '<p class="btn btn-outline-secondary disabled text-font" style="font-size: 25px; border-radius: 10px; border: 6px double;">Account Number: '.number_format($user->getAccno(), 0, ' ', ' ').'</p><br><br>
+	      <p class="btn btn-outline-info disabled text-font" style="font-size: 25px; border-radius: 10px; border: 6px double;">Balance: '.number_format($user->getAmount(), 0, ' ', ' ').' gp</p><br><br>';
 	
-	if($credit > 0) 
-		echo '<p class="btn btn-outline-danger disabled text-font" style="color: red; font-size: 25px; border-radius: 10px; border: 6px double;">Credit: '.$credit;
+	if($credit->getCredit() > 0) 
+		echo '<p class="btn btn-outline-danger disabled text-font" style="color: red; font-size: 25px; border-radius: 10px; border: 6px double;">Credit: '.$credit->getCredit();
 	        else
-		echo '<p class="btn btn-outline-secondary disabled text-font" style="font-size: 25px; border-radius: 10px; border: 6px double;">Credit: '.$credit;
+		echo '<p class="btn btn-outline-secondary disabled text-font" style="font-size: 25px; border-radius: 10px; border: 6px double;">Credit: '.$credit->getCredit();
 	echo ' gp</p><br><br>';
 
     if($query1_data->num_rows > 0){
@@ -31,35 +31,35 @@ $credit = $query0_result['saldo'];
 		<div class="toast-header">';
 		
 		$trans_id=$query1_row['Trans_id'];
-		$remark=$query1_row['Remark'];
-		$amount=$query1_row['Amount'];
-		$date=$query1_row['Date'];
-		$acc1=$query1_row['Acc_no1'];
+		$user->setRemark($query1_row['Remark']);
+		$user->setAmount($query1_row['Amount']);
+		$user->setDate($query1_row['Date']);
+		$transfer->setAccno1($query1_row['Acc_no1']);
 		$kindOfTransfer = '';
 		
-		if($acc1 === $acc_no && $remark != 'CREDIT CASH')
+		if($transfer->getAccno1() === $user->getAccno() && $user->getRemark() != 'CREDIT CASH')
 		    $kindOfTransfer = 'OUTGOING';
 	
-	    if($acc1 !== $acc_no && $remark != 'CREDIT CASH')
+	    if($transfer->getAccno1() !== $user->getAccno() && $user->getRemark() != 'CREDIT CASH')
 		    $kindOfTransfer = 'INCOMING';
 		
 		
-		if($acc1 !== $acc_no)
+		if($transfer->getAccno1() !== $user->getAccno())
 			$color='success';
 		
-            elseif($remark=='CREDIT CASH')
+            elseif($user->getRemark()=='CREDIT CASH')
 			    $color='warning';	
 		        else 
 				$color='danger';
 
-                echo'<strong class="mr-auto text-primary">No. '.$trans_id.' | '.$kindOfTransfer.' '.$remark.'</strong>
-                     <small class="text-muted">'.$date.'</small></div>';
+                echo'<strong class="mr-auto text-primary">No. '.$trans_id.' | '.$kindOfTransfer.' '.$user->getRemark().'</strong>
+                     <small class="text-muted">'.$user->getDate().'</small></div>';
 					
-		        if($remark=='CREDIT CASH'){
+		        if($user->getRemark()=='CREDIT CASH'){
 			        $color2='orange';
 			        $sign='+';
 			    }
-				elseif($acc1 != $acc_no){
+				elseif($transfer->getAccno1() != $user->getAccno()){
 					$color2 = 'green';
 					$sign = '+';
 				}
@@ -68,7 +68,7 @@ $credit = $query0_result['saldo'];
 				    $sign='-';
 			    }
                
-                echo '<div class="toast-body '.$color.'" style="color: '.$color2.';">Amount: '.$sign.''.number_format($amount, 0, ' ', ' ').' gp
+                echo '<div class="toast-body '.$color.'" style="color: '.$color2.';">Amount: '.$sign.''.number_format($user->getAmount(), 0, ' ', ' ').' gp
                     </div></div>';
 	    }
 	}
