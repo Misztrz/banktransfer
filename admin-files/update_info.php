@@ -2,7 +2,6 @@
 if(isset($_GET['subtopic_updateinfo']))
 	{
 ?>
-
 <body>
   <div id="main-wrapper">
 	<nav class="navbar navbar-expand-lg bg-light">
@@ -18,8 +17,8 @@ if(isset($_GET['subtopic_updateinfo']))
 	                        $acc_no_query = $mysql1->query("SELECT Acc_no, Status FROM customers");
 		                    while($account_no = $acc_no_query->fetch_assoc())
 		                        {
-									$save_acc_no = $account_no['Acc_no'];						
-	                                echo'<option value="'.$save_acc_no.'">'.$save_acc_no.'</option>';	
+									$new_customer->setAccno($account_no['Acc_no']);						
+	                                echo'<option value="'.$new_customer->getAccno().'">'.$new_customer->getAccno().'</option>';	
 								}
 						?>			             					
                 	</select>
@@ -41,39 +40,39 @@ if(isset($_GET['subtopic_updateinfo']))
 		echo '<p class="note-msg" style="text-align:center; background-position: 42%;"><br>No selected any account.<br><br></p>';
 	    }
 		
-    $acc_no = $_SESSION['userno'];
+    $new_customer->setUserno($_SESSION['userno']);
 	
     if(isset($_POST['fname']) && !empty($_POST['fname']))
 		{	
-	        $fname=$_POST['fname'];	
-			$query="UPDATE customers SET First_name='$fname' WHERE Acc_no='$acc_no'";
+	        $new_customer->setName($_POST['fname']);	
+			$query="UPDATE customers SET First_name='".$new_customer->getName()."' WHERE Acc_no='".$new_customer->getUserno()."'";
 			$query_= $mysql1->query($query);
 			echo '<p class="success-msg" style="text-align: center; background-position: 45%;">Name updated!</p>';				
 	    }
 		
 	if(isset($_POST['contactno']) && !empty($_POST['contactno']))
-		{	$contact_no=$_POST['contactno'];	
-			$query="UPDATE CUSTOMERS set Contact_No='$contact_no' where Acc_no='$acc_no'";
+		{	$new_customer->setContactno($_POST['contactno']);	
+			$query="UPDATE CUSTOMERS set Contact_No='".$new_customer->getContactno()."' where Acc_no='".$new_customer->getUserno()."'";
 			$query_= $mysql1->query($query);
 			echo '<p class="success-msg" style="text-align: center; background-position: 42%;">Contact number updated!</p>';
 		}
 
 	if(isset($_POST['address']) && !empty($_POST['address']))
-		{	$address=$_POST['address'];	
-			$query="UPDATE CUSTOMERS set Address='$address' where Acc_no='$acc_no'";
+		{	$new_customer->setAddress($_POST['address']);	
+			$query="UPDATE CUSTOMERS set Address='".$new_customer->getAddress()."' where Acc_no='".$new_customer->getUserno()."'";
 			$query_= $mysql1->query($query);
             echo '<p class="success-msg" style="text-align: center; background-position: 44%;">Address updated!</p>';			
 		}
 if(isset($_POST['statuscheck'])){
 	if(isset($_POST['status']) && !empty($_POST['status']))
-		{	$status=$_POST['status'];	
-			$query="UPDATE CUSTOMERS set Status='$status' where Acc_no='$acc_no'";
+		{	$$new_customer->setStatus($_POST['status']);	
+			$query="UPDATE CUSTOMERS set Status='".$new_customer->getStatus()."' where Acc_no='".$new_customer->getUserno()."'";
 		    $query_= $mysql1->query($query);	
 			echo '<p class="success-msg" style="text-align: center; background-position: 45%;">Status updated!</p>';
 		}
 }
 	
-	$query1 = "SELECT * FROM customers WHERE Acc_no = '$acc_no'";	
+	$query1 = "SELECT * FROM customers WHERE Acc_no = '".$new_customer->getUserno()."'";	
 if($query2 = $mysql1->query($query1)){
 	$query4 = $query2->fetch_assoc();
 	?>
