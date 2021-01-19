@@ -1,24 +1,27 @@
 <?php 
 require_once 'server_connect.inc.php';
 require_once 'get_logged.inc.php';
-include 'classes/BANK_DB.php';
+include 'USER.php';
 
-$db = new BANK_DB();
+$user = new USER();
+$credit = new Credit();
+$transfer = new Transfer();
 
-if(@($_SESSION['emp_id']==null || $_SESSION['emp_id']=="") && (@($_SESSION['atm']==null ||$_SESSION['atm']=="") || @($_SESSION['pin']==null ||$_SESSION['pin']=="")))
+if(@($_SESSION['emp_id']==null || $_SESSION['emp_id']=="" || $_SESSION['password']==null || $_SESSION['password']=="") && (@($_SESSION['atm']==null || $_SESSION['atm']=="") || @($_SESSION['pin']==null || $_SESSION['pin']=="")))
 {
 die(header('Location:index.php'));
 }
-$acc_no=$_SESSION['acc_no'];
-$query01="SELECT * FROM customers WHERE Acc_no='$acc_no'";
+
+$user->setAccno($_SESSION['acc_no']);
+$query01="SELECT * FROM customers WHERE Acc_no='".$user->getAccno()."'";
 $query01_data=$mysql1->query($query01);
 $query01_result=$query01_data->fetch_assoc();
 
-$first_name = $query01_result['First_name'];
-$status = $query01_result['Status'];
-$amount = $query01_result['Amount'];
+$user->setFname($query01_result['First_name']);
+$user->setStatus($query01_result['Status']);
+$user->setAmount($query01_result['Amount']);
 
- if($status == 'Member')
+ if($user->getStatus() == 'Member')
 		$label = 'primary';
 	else
 		$label = 'danger';
@@ -43,8 +46,8 @@ $amount = $query01_result['Amount'];
 <body>
     <nav class="navbar top-bar-gradient" role="navigation">
                 <span class="logo hope">OTS Transfer Money</span>
-			    <span class="top1-menu-word">User Name: <?php echo $first_name;?></span>
-				<span class="top2-menu-word">Status: <span class="badge badge-<?php echo $label;?>"><?php echo $status;?></span></span>
+			    <span class="top1-menu-word">User Name: <?php echo $user->getFname();?></span>
+				<span class="top2-menu-word">Status: <span class="badge badge-<?php echo $label;?>"><?php echo $user->getStatus();?></span></span>
                 <span><button type="button" class="btn btn-primary top3-menu-word" data-target="#confirmModal" data-backdrop="false" data-toggle="modal"><i class="fa fa-sign-out"></i>Logout</button></span>
     </nav>
 	 <div class="modal" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
