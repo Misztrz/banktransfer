@@ -4,34 +4,33 @@ if(isset($_GET['subtopic_transfer']))
 {
 if(isset($_POST['Amount']) && !empty($_POST['Amount']) && isset($_POST['Acc_no2']) && !empty($_POST['Acc_no2'])){
 
-@$atm=$_SESSION['atm'];
-@$pin=$_SESSION['pin'];
-
 	$time=time();
-	$date=date("Y/m/d H:i:s",$time);
-	$amount=$_POST['Amount'];
+	$transfer->setDate(date("Y/m/d H:i:s",$time));
+	$transfer->setAmount($_POST['Amount']);
 	
-	if($amount > 0){
+	if($user->getAmount() > 0){
 
-		$acc_no_credit=$_POST['Acc_no2'];
+		$transfer->setAccnoCredit($_POST['Acc_no2']);
 		
-		if($rows = $query01_data->num_rows > 0){
-			$a=$query01_result['Amount'];
-		
-		    if($acc_no_credit !== $query01_result['Acc_no'] ){							
-			    if($amount <= $a){
+		if($rows = $query01_data->num_rows > 0){	
+		    if($transfer->getAccnoCredit() !== $user->getAccno()){							
+			    if($transfer->getAmount() <= $user->getAmount()){
 				    $query7="SELECT Trans_count FROM Transaction_count";
 					$query7_data=$mysql1->query($query7);
 					$query7_row=$query7_data->fetch_assoc();
 					$Trans_id=$query7_row['Trans_count']+1;
-					$query1="INSERT INTO Transactions(Trans_id,Date,Acc_no1,Acc_no2,Remark,Amount) VALUES('$Trans_id','$date','$acc_no','$acc_no_credit','TRANSFER','$amount')";
-					$query4="UPDATE CUSTOMERS SET Amount=Amount-'$amount' WHERE Acc_no='$acc_no'";
-					$query2="UPDATE CUSTOMERS SET Amount=Amount+'$amount' WHERE Acc_no='$acc_no_credit'";
+					$query1="INSERT INTO Transactions(Trans_id,Date,Acc_no1,Acc_no2,Remark,Amount) VALUES('$Trans_id','".$transfer->getDate()."','".$user->getAccno()."','".$transfer->getAccnoCredit()."','TRANSFER','".$transfer->getAmount()."')";
+					$query4="UPDATE CUSTOMERS SET Amount=Amount-'".$transfer->getAmount()."' WHERE Acc_no='".$user->getAccno()."'";
+					$query2="UPDATE CUSTOMERS SET Amount=Amount+'".$transfer->getAmount()."' WHERE Acc_no='".$transfer->getAccnoCredit()."'";
 					$query5="UPDATE Transaction_count SET Trans_count=Trans_count+1";
 
 				    if($query1_data=$mysql1->query($query1) && $query2_data=$mysql1->query($query2) && $query4_data=$mysql1->query($query4)){				        
 						if($query5_data=$mysql1->query($query5)){
-					        echo '<p class="success-msg">Money Transfer Successful<br><br>Account Number: '.$acc_no.'<br><br>Amount transfered: '.number_format($amount, 0, ' ', ' ').'<br><br>Amount transfered to: '.$acc_no_credit;
+							$select_name = "SELECT First_name FROM customers WHERE Acc_no='".$transfer->getAccnoCredit()."'";
+							$select_name_data = $mysql1->query($select_name);
+							$select_name_row = $select_name_data->fetch_assoc();
+							$transfer->setFname($select_name_row['First_name']);
+							echo $transfer->transferConfirmMsg($transfer->getFname());
 					    }
 				        else { echo '<p class="error-msg">Could not transfer</p>';}
 			        }
