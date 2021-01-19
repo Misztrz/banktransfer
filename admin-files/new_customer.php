@@ -14,52 +14,46 @@ if(isset($_GET['subtopic_newacc']))
         <div class="margin-bottom-15" style="text-align: center;">
 <?php
 
-if(isset($_POST['First_name']) && !empty($_POST['First_name']) && isset($_POST['Status']) && !empty($_POST['Status']) && isset($_POST['day']) && !empty($_POST['day']) && isset($_POST['Address']) && !empty($_POST['Address']) && isset($_POST['month']) && !empty($_POST['month']) && isset($_POST['Amount']) && !empty($_POST['Amount']) && isset($_POST['Contact_no']) && !empty($_POST['Contact_no'])){
+if(isset($_POST['First_name']) && !empty($_POST['First_name'])	&& isset($_POST['Status']) && !empty($_POST['Status']) 
+	&& isset($_POST['day']) && !empty($_POST['day']) && isset($_POST['Address']) && !empty($_POST['Address']) 
+    && isset($_POST['month']) && !empty($_POST['month']) && isset($_POST['year']) && !empty($_POST['year'])
+    && isset($_POST['Contact_no']) && !empty($_POST['Contact_no'])){
 
-/*variable from form*/
-
-$first_name=$_POST['First_name'];
-$status=$_POST['Status'];
-$address=$_POST['Address'];
-$day=$_POST['day'];
-$month=$_POST['month'];
-$year=$_POST['year'];
-$amount=$_POST['Amount'];
-$contact_no=$_POST['Contact_no'];
+$new_customer->setName($_POST['First_name']);
+$new_customer->setStatus($_POST['Status']);
+$new_customer->setAddress($_POST['Address']);
+$new_customer->setDay($_POST['day']);
+$new_customer->setMonth($_POST['month']);
+$new_customer->setYear($_POST['year']);
+$new_customer->setAmount(0);
+$new_customer->setContactno($_POST['Contact_no']);
 $time=time();
-$created_on=date("Y/m/d",$time);
-$pin=rand(1000,9999);
-$atm_no=rand(459100,459199);
-$acc_no=rand(1230001,1239991);
+$new_customer->setCreatedon(date("Y/m/d",$time));
+$new_customer->setPin(rand(1000,9999));
+$new_customer->setAtmno(rand(459100,459199));
+$new_customer->setAccno(rand(1230001,1239991));
+$new_customer->setDob($new_customer->getYear()."/".$new_customer->getMonth()."/".$new_customer->getDay());
 
-/*concatenating stings*/
-	$dob=$year."/".$month."/".$day;
-
-	$query2="SELECT Acc_no,ATM_NO FROM CUSTOMERS WHERE Acc_no='$acc_no' OR ATM_NO='$atm_no'";
+	$query2="SELECT Acc_no, ATM_NO FROM CUSTOMERS WHERE Acc_no='".$new_customer->getAccno()."' OR ATM_NO='".$new_customer->getAtmno()."'";
 	$query2_data=$mysql1->query($query2);
 
 	if($row = $query2_data->num_rows == 0){
-		$query1="INSERT INTO CUSTOMERS(Acc_no,First_name,Status,DOB,Contact_no,Address,Created_on,Amount,ATM_NO,PIN) VALUES('$acc_no','$first_name','$status','$dob','$contact_no','$address','$created_on','$amount','$atm_no','$pin')";
+		$query1="INSERT INTO CUSTOMERS(Acc_no,First_name,Status,DOB,Contact_no,Address,Created_on,Amount,ATM_NO,PIN) VALUES('".$new_customer->getAccno()."','".$new_customer->getName()."','".$new_customer->getStatus()."','".$new_customer->getDob()."','".$new_customer->getContactno()."','".$new_customer->getAddress()."','".$new_customer->getCreatedon()."','".$new_customer->getAmount()."','".$new_customer->getAtmno()."','".$new_customer->getPin()."')";
         
 		if($query1_data = $mysql1->query($query1)){
-			$query_insert_in_credit = "INSERT INTO credit_cash(saldo, owner) VALUES('0', '$acc_no')";
+			$query_insert_in_credit = "INSERT INTO credit_cash(saldo, owner) VALUES('0', '".$new_customer->getAccno()."')";
 			$mysql1->query($query_insert_in_credit);
-			$query3="SELECT * FROM CUSTOMERS WHERE Acc_no='$acc_no'";
+			$query3="SELECT * FROM CUSTOMERS WHERE Acc_no='".$new_customer->getAccno()."'";
 			
-			if($query3_data = $mysql1->query($query3)){
-			    $query3_row=$query3_data->fetch_assoc();
-			    $first_name=$query3_row['First_name'];
-			    $status=$query3_row['Status'];
-			    echo '<p class="success-msg">Welcome to Moneta Family</h3><br>Name: '.$first_name.'
-			    <br>Status: '.$status.'<br>Account number: '.$acc_no.'<br>ATM No: '.$atm_no.'<br>PIN: '.$pin.'<br></p>';
-			}
+			if($query3_data = $mysql1->query($query3)){			    
+				echo $new_customer->newcustomerConfirmMsg();										
+			}else { echo '<p class="error-msg">Pretty close!</p>'; }
 				
 		}else{  echo '<p class="error-msg">Something wrong</p>';}		
 				
 	}else { echo'<p class="error-msg">Account exists!</p>';}
 	
 }else {
-	
 	?>
 	</div>
         <div align="center">
@@ -67,7 +61,7 @@ $acc_no=rand(1230001,1239991);
 		    <p class="margin-bottom-15">Please verify the details.</p>
             <div class="row">
                 <div class="col-md-12">
-                    <form role="form" action="emp_wspace.php?subtopic_newacc=new_customer.php" id="templatemo-preferences-form" method="POST">
+                    <form role="form" action="emp_wspace.php?subtopic_newacc=new_customer" id="templatemo-preferences-form" method="POST">
                         <div class="row">
                             <div class="col-md-6 margin-bottom-15">
                                 <label for="First_name" class="control-label">First Name</label>
@@ -78,7 +72,7 @@ $acc_no=rand(1230001,1239991);
                                 <label for="Status" class="control-label">Status</label>
                                 <select class="custom-select margin-bottom-15" id="Status" name="Status" required>
 	                                <option>Member</option>
-					<option>Administrator</option>
+						            <option>Administrator</option>
 		                        </select>								
                             </div>
                         </div> 
@@ -105,12 +99,7 @@ $acc_no=rand(1230001,1239991);
                                 <select class="custom-select margin-bottom-15" id="month" name="month" placeholder="MONTH" required>
 	
 	                        <?php
-		                    $i=1;
-		                    while($i<=12)
-		                    {   
-						        echo'<option>'.$i.'</option>';
-                   	            $i=$i+1;
-			                }
+							    $new_customer->showRange(1, 12);	                  
 							?>
 						
 		                        </select>
@@ -121,12 +110,7 @@ $acc_no=rand(1230001,1239991);
                                 <select class="custom-select margin-bottom-15" id="day" name="day" placeholder="DAY" required>
 		                    
 							<?php
-		                    $i=1;
-		                    while($i<=31)
-		                    {   
-						        echo'<option>'.$i.'</option>';
-                   	            $i=$i+1;
-			                }
+							    $new_customer->showRange(1, 31);	                    
 		                    ?>
 							
 							    </select>
@@ -137,21 +121,10 @@ $acc_no=rand(1230001,1239991);
                                 <select class="custom-select margin-bottom-15" id="year" name="year" placeholder="YEAR" required>
 		                    
 							<?php
-		                    $i=1900;
-		                    while($i <= date("Y"))
-		                    {   
-						        echo'<option>'.$i.'</option>';
-                   	            $i=$i+1;
-			                }
-                            ?>
-		
+							    $new_customer->showRange(1900, date("Y"));
+                            ?>	
 		                        </select>                  
-                            </div>                  
-                            
-							<div class="col-md-2 margin-bottom-15">
-                                <label for="Amount" class="control-label">Amount</label>
-                                <input type="number" class="form-control" id="Amount" name="Amount" placeholder="Amount" required>  
-                            </div>
+                            </div>                                     
 		                </div>
                 </div>
 	            <div style="margin-left: 45%;"> 
