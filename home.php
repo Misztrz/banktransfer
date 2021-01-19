@@ -1,111 +1,88 @@
 <?php
 require 'server_connect.inc.php';
+include 'USER.php';
 if(!isset($_SESSION))
 session_start();
 
+$account = new Account();
+$user = new USER();
+$create_acc = new Create_Account();
+
 if(isset($_POST['ATM_NO']) && !empty($_POST['ATM_NO']) && isset($_POST['PIN']) && !empty($_POST['PIN']) ){
 		
-		$atm_no=$_POST['ATM_NO'];
-		$pin=$_POST['PIN'];
-		$query1="SELECT Acc_no FROM CUSTOMERS WHERE ATM_NO='$atm_no' AND PIN='$pin'";
+		$account->setAtmno($_POST['ATM_NO']);
+		$account->setPin($_POST['PIN']);
+		$query1="SELECT Acc_no FROM CUSTOMERS WHERE ATM_NO='".$account->getAtmno()."' AND PIN='".$account->getPin()."'";
 		
 		if($query1_data=$mysql1->query($query1)){
 			
 			if($query1_data->num_rows ==1){
-					$_SESSION['atm']=$atm_no;
-					$_SESSION['pin']=$pin;
-					$acc_no=mysqli_result($query1_data,0,'Acc_no');
-					$_SESSION['acc_no']=$acc_no;
+					$_SESSION['atm']=$account->getAtmno();
+					$_SESSION['pin']=$account->getPin();
+					$user->setAccno($account->mysqli_result($query1_data, 0, 'Acc_no'));
+					$_SESSION['acc_no']=$user->getAccno();
 										
 					header('Location:index.php');	
 			}
 			else if($query1_data->num_rows == 0){
-				
 				}
 		}
 }
-?>
-<?php
-function mysqli_result($search, $row, $field){
-$i=0;
-    while($results = mysqli_fetch_array($search))
-	{
-        if ($i == $row){ $result=$results[$field]; }
-            $i++;
-			}
-        return $result;
-} 
 
 if(isset($_POST['Emp_id']) && !empty($_POST['Emp_id']) && isset($_POST['Password']) && !empty($_POST['Password'])){
-			$Emp_id=$_POST['Emp_id'];
-			$Password=$_POST['Password'];
-			$Password_new=MD5($Password);
+			$account->setEmpid($_POST['Emp_id']);
+			$account->setPassword($_POST['Password']);
+			$Password_new=MD5($account->getPassword());
 
-			$query1="SELECT Emp_id FROM Employee WHERE Emp_id='$Emp_id' AND Password='$Password_new'";
+			$query1="SELECT Emp_id FROM Employee WHERE Emp_id='".$account->getEmpid()."' AND Password='$Password_new'";
 
 			if($query1_data=$mysql1->query($query1)) {
 
 				if($query1_data->num_rows == 1){
-						$emp_id=mysqli_result($query1_data,0,'Emp_id');
-						
-						$_SESSION['emp_id']=$emp_id;
+						$account->setEmpid($account->mysqli_result($query1_data, 0, 'Emp_id'));
+						$_SESSION['emp_id']=$account->getEmpid();
+						$_SESSION['password']=$account->getPassword();
 						header('Location:index.php');
-
 				    }
-						
 				else if($query1_data->num_rows == 0){ 
-						//echo 'Invalid username and/or password';
 				    }
 			}
     }		
-	
 	
 	if(isset($_POST['loginReg']) && !empty($_POST['loginReg']) && isset($_POST['nameReg']) && !empty($_POST['nameReg']) && isset($_POST['contactReg']) && !empty($_POST['contactReg']) 
 		&& isset($_POST['addressReg']) && !empty($_POST['addressReg']) && isset($_POST['monthReg']) && !empty($_POST['monthReg']) && isset($_POST['dayReg']) && !empty($_POST['dayReg'])
 	    && isset($_POST['yearReg']) && !empty($_POST['yearReg']) && isset($_POST['pinReg']) && !empty($_POST['pinReg'])) 
 		{
-			
-			$name=$_POST['nameReg'];
-            $login=$_POST['loginReg'];
-            $address=$_POST['addressReg'];
-            $day=$_POST['dayReg'];
-            $month=$_POST['monthReg'];
-            $year=$_POST['yearReg'];
-            $contact_no=$_POST['contactReg'];
+			$create_acc->setName($_POST['nameReg']);
+            $create_acc->setLogin($_POST['loginReg']);
+            $create_acc->setAddress($_POST['addressReg']);
+            $create_acc->setDay($_POST['dayReg']);
+            $create_acc->setMonth($_POST['monthReg']);
+            $create_acc->setYear($_POST['yearReg']);
+            $create_acc->setContactno($_POST['contactReg']);
             $time=time();
-            $created_on=date("Y/m/d",$time);
-            $pin=$_POST['pinReg'];
-            $acc_no=rand(1230001,1239991);
+            $create_acc->setCreatedon(date("Y/m/d",$time));
+            $create_acc->setPin($_POST['pinReg']);
+            $create_acc->setAccno(rand(1230001,1239991));
+	        $create_acc->setDob($create_acc->getYear()."/".$create_acc->getMonth()."/".$create_acc->getDay());
 
-/*concatenating stings*/
-	        $dob=$year."/".$month."/".$day;
-
-	        $query2="SELECT Acc_no,ATM_NO FROM CUSTOMERS WHERE Acc_no='$acc_no' OR ATM_NO='$login'";
+	        $query2="SELECT Acc_no,ATM_NO FROM CUSTOMERS WHERE Acc_no='".$create_acc->getAccno()."' OR ATM_NO='".$create_acc->getLogin()."'";
 	        $query2_data=$mysql1->query($query2);
 
 	        if($row = $query2_data->num_rows == 0){
-		        $query1="INSERT INTO CUSTOMERS(Acc_no,First_name,Status,DOB,Contact_no,Address,Created_on,Amount,ATM_NO,PIN) VALUES('$acc_no','$name','Member','$dob','$contact_no','$address','$created_on','0','$login','$pin')";
+		        $query1="INSERT INTO CUSTOMERS(Acc_no,First_name,Status,DOB,Contact_no,Address,Created_on,Amount,ATM_NO,PIN) VALUES('".$create_acc->getAccno()."','".$create_acc->getName()."','Member','".$create_acc->getDob()."','".$create_acc->getContactno()."','".$create_acc->getAddress()."','".$create_acc->getCreatedon()."','0','".$create_acc->getLogin()."','".$create_acc->getPin()."')";
         
 		if($query1_data = $mysql1->query($query1)){
-			$query_insert_in_credit = "INSERT INTO credit_cash(saldo, owner) VALUES('0', '$acc_no')";
+			$query_insert_in_credit = "INSERT INTO credit_cash(saldo, owner) VALUES('0', '".$create_acc->getAccno()."')";
 			$mysql1->query($query_insert_in_credit);
-			$query3="SELECT * FROM CUSTOMERS WHERE Acc_no='$acc_no'";
+			$query3="SELECT * FROM CUSTOMERS WHERE Acc_no='".$create_acc->getAccno()."'";
 			
 			if($query3_data = $mysql1->query($query3)){
-			    $query3_row=$query3_data->fetch_assoc();
-			    $name=$query3_row['First_name'];
-			    $login=$query3_row['ATM_NO'];
-				$pin=$query3_row['PIN'];
-					echo '	<p class="success-msg" style="text-align: center;">Welcome to Moneta Family</h3><br>Name: '.$name.'
-			                <br>Account number: '.$acc_no.'<br>Login: '.$login.'<br>PIN: '.$pin.'</p> ';
+				echo $create_acc->showData();
 			}
-				
-		}else{  echo '<p class="error-msg">Something wrong</p>';}		
-				
+		}else{  echo '<p class="error-msg">Something wrong</p>';}			
 	}else { echo'<p class="error-msg">Account exists!</p>';}
-	
-	
-		}		
+}		
 ?>
 
 <!doctype html>
@@ -169,13 +146,8 @@ if(isset($_POST['Emp_id']) && !empty($_POST['Emp_id']) && isset($_POST['Password
 	                                <div class="col-md-2 margin-bottom-15">
                                         <label for="monthReg">Month</label>
                                         <select class="custom-select margin-bottom-15" id="monthReg" name="monthReg" placeholder="MONTH" required>	
-	                                    <?php
-		                                    $i=1;
-		                                    while($i<=12)
-		                                    {   
-						                        echo'<option>'.$i.'</option>';
-                   	                            $i=$i+1;
-			                                }
+	                                    <?php										
+										    $create_acc->showRange(1, 12);		                                
 							            ?>
 		                                </select>
                                     </div>
@@ -183,12 +155,7 @@ if(isset($_POST['Emp_id']) && !empty($_POST['Emp_id']) && isset($_POST['Password
                                         <label for="dayReg">Day</label>
                                         <select class="custom-select margin-bottom-15" id="dayReg" name="dayReg" placeholder="DAY" required>	                    
 							            <?php
-		                                    $i=1;
-		                                    while($i<=31)
-		                                    {    
-						                        echo'<option>'.$i.'</option>';
-                   	                            $i=$i+1;
-			                                }
+		                                    $create_acc->showRange(1, 31);	                                    
 		                                ?>	
 							            </select>
                                     </div>     
@@ -196,12 +163,7 @@ if(isset($_POST['Emp_id']) && !empty($_POST['Emp_id']) && isset($_POST['Password
                                         <label for="yearReg">Year</label>
                                         <select class="custom-select margin-bottom-15" id="yearReg" name="yearReg" placeholder="YEAR" required>	        
 							            <?php
-		                                    $i=1900;
-		                                    while($i <= date("Y"))
-		                                    {   
-						                        echo'<option>'.$i.'</option>';
-                   	                            $i=$i+1;
-			                                }
+										    $create_acc->showRange(1900, date("Y"));	                                    
                                         ?>
 		                                </select>                  
                                     </div>  
