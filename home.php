@@ -10,8 +10,8 @@ $create_acc = new Create_Account();
 
 if(isset($_POST['ATM_NO']) && !empty($_POST['ATM_NO']) && isset($_POST['PIN']) && !empty($_POST['PIN']) ){
 		
-		$account->setAtmno($_POST['ATM_NO']);
-		$account->setPin($_POST['PIN']);
+		$account->setAtmno($_GET['ATM_NO']);
+		$account->setPin($_GET['PIN']);
 		$query1="SELECT Acc_no FROM CUSTOMERS WHERE ATM_NO='".$account->getAtmno()."' AND PIN='".$account->getPin()."'";
 		
 		if($query1_data=$mysql1->query($query1)){
