@@ -16,15 +16,16 @@ if(isset($_POST['ATM_NO']) && !empty($_POST['ATM_NO']) && isset($_POST['PIN']) &
 		
 		if($query1_data=$mysql1->query($query1)){
 			
-			if($query1_data->num_rows ==1){
+			if($query1_data->num_rows == 1){
 					$_SESSION['atm']=$account->getAtmno();
 					$_SESSION['pin']=$account->getPin();
 					$user->setAccno($account->mysqli_result($query1_data, 0, 'Acc_no'));
-					$_SESSION['acc_no']=$user->getAccno();
-										
-					header('Location:index.php');	
+					$_SESSION['acc_no']=$user->getAccno();					
+					header('Location:index.php');
+				echo "login ok";
 			}
-			else if($query1_data->num_rows == 0){
+			else {
+				echo "login error";
 				}
 		}
 }
