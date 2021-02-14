@@ -1,23 +1,18 @@
 <?php
-    $dbname1 = 'heroku_5bed88585e7b234';
-    $dbpass = '41f08082';
-    $dbuser = 'bd78a604caf3aa';
 
-$dbc = mysqli_connect('us-cdbr-east-02.cleardb.com', $dbuser, $dbpass, $dbname1);
-
+$dbc = mysqli_connect('localhost', 'root', 'dexde3', 'bankman'); 
 if(!$dbc) {
     die('DATABASE CONNECTION FAILED:'.mysqli_error($dbc));
 exit();
 }
 
-$dbs = mysqli_select_db($dbc, $dbname1);
+$dbs = mysqli_select_db($dbc, 'bankman');
 
 if(!$dbs) {
     die('DATABASE SELECTION FAILED:'.mysqli_error($dbc));
 exit();
 }
-$_GET['atm'] = 0;
-$_GET['pin'] = 0;
+
 $user_id = mysqli_real_escape_string($dbc, $_GET['atm']);
 $psw = mysqli_real_escape_string($dbc, $_GET['pin']);
 
