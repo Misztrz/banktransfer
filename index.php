@@ -4,8 +4,6 @@
     $dbuser = 'bd78a604caf3aa';
 
 $dbc = mysqli_connect('us-cdbr-east-02.cleardb.com', $dbuser, $dbpass, $dbname1);
-
-$dbc = mysqli_connect('localhost', 'root', 'dexde3', 'bankman'); 
 if(!$dbc) {
     die('DATABASE CONNECTION FAILED:'.mysqli_error($dbc));
 exit();
