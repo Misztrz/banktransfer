@@ -16,8 +16,8 @@ if(!$dbs) {
 exit();
 }
 
-$user_id = mysqli_real_escape_string($dbc, $_GET['atm']);
-$psw = mysqli_real_escape_string($dbc, $_GET['pin']);
+$user_id = mysqli_real_escape_string($dbc, $_POST['atm']);
+$psw = mysqli_real_escape_string($dbc, $_POST['pin']);
 
 $sql = $dbc->query("SELECT * FROM customers WHERE ATM_NO='$user_id' AND PIN='$psw'");
 
