@@ -10,7 +10,7 @@ if(!$dbc) {
 exit();
 }
 
-$dbs = mysqli_select_db($dbc, 'bankman');
+$dbs = mysqli_select_db($dbc, $dbname1);
 
 if(!$dbs) {
     die('DATABASE SELECTION FAILED:'.mysqli_error($dbc));
