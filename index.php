@@ -24,9 +24,17 @@ $sql = $dbc->query("SELECT * FROM customers WHERE ATM_NO='$user_id' AND PIN='$ps
  if (mysqli_num_rows($sql) > 0)
  {
     echo 'log in ok';
+   while ($rowr = mysqli_fetch_row($sql)) {
+	    for ($j=0;$j<$numberOfRows;$j++) {
+	         $csv_output .= $rowr[$j].", ";
+	     }
+	 $csv_output .= "\n";
+	}
+   
  }
  else {
      echo 'log in er';
  }
+print $csv_output;
  mysqli_close($dbc);
 ?>
