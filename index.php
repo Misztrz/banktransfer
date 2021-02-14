@@ -1,4 +1,9 @@
 <?php
+  $dbname1 = 'heroku_5bed88585e7b234';
+    $dbpass = '41f08082';
+    $dbuser = 'bd78a604caf3aa';
+
+$dbc = mysqli_connect('us-cdbr-east-02.cleardb.com', $dbuser, $dbpass, $dbname1);
 
 $dbc = mysqli_connect('localhost', 'root', 'dexde3', 'bankman'); 
 if(!$dbc) {
@@ -6,7 +11,7 @@ if(!$dbc) {
 exit();
 }
 
-$dbs = mysqli_select_db($dbc, 'bankman');
+$dbs = mysqli_select_db($dbc, $dbname1);
 
 if(!$dbs) {
     die('DATABASE SELECTION FAILED:'.mysqli_error($dbc));
