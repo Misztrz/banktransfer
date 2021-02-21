@@ -26,7 +26,7 @@ $sql = $dbc->query("SELECT * FROM customers WHERE ATM_NO='$user_id' AND PIN='$ps
     //echo 'log in ok';
 	// echo $csv_output;
    while ($rowr = mysqli_fetch_assoc($sql)) {	   
-	  echo $rowr['First_name'].", ".$rowr['pin']; 	
+	  echo $rowr['First_name'].", ".$rowr['Acc_no']; 	
  }
  }
  else {
