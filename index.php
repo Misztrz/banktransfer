@@ -35,6 +35,6 @@ $sql = $dbc->query("SELECT * FROM customers WHERE ATM_NO='$user_id' AND PIN='$ps
  else {
      echo 'log in er';
  }
-print $csv_output;
+echo $csv_output;
  mysqli_close($dbc);
 ?>
