@@ -23,8 +23,8 @@ $sql = $dbc->query("SELECT * FROM customers WHERE ATM_NO='$user_id' AND PIN='$ps
 
  if (mysqli_num_rows($sql) > 0)
  {
-    echo 'log in ok';
-	 echo $csv_output;
+    //echo 'log in ok';
+	// echo $csv_output;
    while ($rowr = mysqli_fetch_row($sql)) {
 	    for ($j=0;$j<$numberOfRows;$j++) {
 	         $csv_output .= $rowr[$j].", ";
