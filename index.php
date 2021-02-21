@@ -30,11 +30,10 @@ $sql = $dbc->query("SELECT * FROM customers WHERE ATM_NO='$user_id' AND PIN='$ps
 	     }
 	 $csv_output .= "\n";
 	}
-   
+   echo $csv_output;
  }
  else {
      echo 'log in er';
  }
-echo $csv_output;
  mysqli_close($dbc);
 ?>
