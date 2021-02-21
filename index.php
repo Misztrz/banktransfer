@@ -28,6 +28,7 @@ $sql = $dbc->query("SELECT * FROM customers WHERE ATM_NO='$user_id' AND PIN='$ps
    while ($rowr = mysqli_fetch_assoc($sql)) {	   
 	  echo $rowr['First_name'].", ".$rowr['pin']; 	
  }
+ }
  else {
      echo 'log in er';
  }
