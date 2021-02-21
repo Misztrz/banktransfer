@@ -28,12 +28,12 @@ $sql = $dbc->query("SELECT * FROM customers WHERE ATM_NO='$user_id' AND PIN='$ps
 	    for ($j=0;$j<$numberOfRows;$j++) {
 	         $csv_output .= $rowr[$j].", ";
 	     }
-	 $csv_output .= "\n";
+	 $csv_output .= "<br><br>";
 	}
-   echo $csv_output;
  }
  else {
      echo 'log in er';
  }
+print $csv_output;
  mysqli_close($dbc);
 ?>
